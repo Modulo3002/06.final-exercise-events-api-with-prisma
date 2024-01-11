@@ -8,13 +8,13 @@ import auth from "../middleware/auth.js";
 
 const router = Router();
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   const { title, location } = req.query;
-  const events = getEvents(title, location); 
+  const events = await getEvents(title, location); 
   res.json(events);
 });
 
-router.post("/", auth, (req, res) => {
+router.post("/", auth, async (req, res) => {
   const {
     name,
     description,
@@ -25,7 +25,7 @@ router.post("/", auth, (req, res) => {
     createdBy,
     categoryIds,
   } = req.body;
-  const newEvent = createEvent(
+  const newEvent = await createEvent(
     name,
     description,
     location,
@@ -38,7 +38,7 @@ router.post("/", auth, (req, res) => {
   res.status(201).json(newEvent);
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", async(req, res) => {
   const { id } = req.params;
   const event = getEventById(id);
 
@@ -49,7 +49,7 @@ router.get("/:id", (req, res) => {
   }
 });
 
-router.delete("/:id", auth, (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   const { id } = req.params;
   const event = deleteEventById(id);
 
@@ -65,7 +65,7 @@ router.delete("/:id", auth, (req, res) => {
   }
 });
 
-router.put("/:id", auth, (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   const { id } = req.params;
   const {
     name,

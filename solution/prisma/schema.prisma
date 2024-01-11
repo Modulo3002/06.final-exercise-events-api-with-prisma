@@ -18,7 +18,7 @@ model User {
   password String
   name     String
   image    String
-  Event    Event[]
+  event    Event[]
 }
 
 model Event {
@@ -27,12 +27,12 @@ model Event {
   description String
   image       String
   location    String
-  startTime   String
-  endTime     String
+  startTime   DateTime
+  endTime     DateTime
   userId      String
   //Hieronder een implicite may-to-many binding bij aan Category, dit doe je door de molnaam met brackets[] erachter te typen
-  categoryIds Category[]
-  //Hieronder een one to many relation. 
+  categories  Category[]
+  //Hieronder zie je een one to many relation. 
   createdBy   User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([userId])
@@ -40,6 +40,7 @@ model Event {
 
 model Category {
   name   String
-  id     String  @id @unique
+  id     String  @id @unique 
   events Event[]
+
 }

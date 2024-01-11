@@ -1,4 +1,4 @@
-import {PrismaClient} from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 import categoryData from "../src/data/categories.json" assert { type: "json" };
 import eventsData from "../src/data/events.json" assert { type: "json" };
@@ -11,14 +11,6 @@ async function main() {
   const { events } = eventsData;
   const { users } = userData;
 
-  for (const category of categories) {
-    await prisma.category.upsert({
-      where: { id: category.id },
-      update: {},
-      create: category,
-    });
-  }
-
   for (const user of users) {
     await prisma.user.upsert({
       where: { id: user.id },
@@ -27,15 +19,34 @@ async function main() {
     });
   }
 
+  for (const category of categories) {
+    await prisma.category.upsert({
+      where: { id: category.id },
+      update: {},
+      create: category,
+    });
+  }
+
   for (const event of events) {
     await prisma.event.upsert({
       where: { id: event.id },
       update: {},
-      create: event,
+      create: {
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        image: event.image,
+        location: event.location,
+        startTime: event.startTime,
+        endTime: event.endTime,
+        createdBy: { connect: { id: event.createdBy } },
+        categories: {
+          connect: event.categoryIds.map((categoryId) => ({ id: categoryId })),
+        }
+      },
     });
   }
 }
-
 main()
   .then(async () => {
     await prisma.$disconnect();
